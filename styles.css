@@ -1,0 +1,523 @@
+/* ============================================================
+   Bruno Esposto — sistema visual
+   Papel crema + Didone. Sin color de acento:
+   el único color de la página son los reels.
+   ============================================================ */
+
+:root{
+  --paper:      #F1ECE2;
+  --paper-deep: #E7E0D2;
+  --ink:        #15151A;
+  --ink-soft:   #6E685C;
+  --rule:       #CEC4B2;
+
+  --display: "Bodoni Moda", "Times New Roman", serif;
+  --sans:    "Archivo", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  --wrap: 1280px;
+  --gut:  clamp(1.25rem, 4vw, 4rem);
+  --band: clamp(5rem, 11vh, 9rem);
+
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; scroll-padding-top:5rem; }
+
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:clamp(.9375rem,.9rem + .2vw,1.0625rem);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* ---------- ajuste óptico de la Bodoni ----------
+   Bodoni Moda es variable en dos ejes: peso (400–600) y óptico (6–96).
+   El óptico es el que importa: en valores altos la fuente está dibujada
+   para titulares enormes, con los trazos finos al mínimo, y el navegador
+   lo iguala por defecto al tamaño en píxeles. Forzándolo bajo recuperamos
+   cuerpo sin perder el contraste Didone. A menor tamaño de texto,
+   menor opsz. Nada de -webkit-font-smoothing:antialiased, que en Mac
+   adelgaza todavía más unos trazos que ya son pelos. */
+.hero__name,
+.hero__lede,
+.hero__proof strong,
+.h2,
+.cta__h,
+.nav__mark,
+.foot__sig{ font-optical-sizing:none; }
+
+/* height:auto es necesario: sin esto los atributos width/height del HTML
+   ganan sobre aspect-ratio y las fotos se estiran a su alto natural. */
+img,video{ display:block; max-width:100%; height:auto; }
+ul,ol{ margin:0; padding:0; list-style:none; }
+figure{ margin:0; }
+a{ color:inherit; }
+
+:focus-visible{ outline:2px solid var(--ink); outline-offset:3px; }
+
+.skip{
+  position:absolute; left:-9999px; top:0; z-index:100;
+  background:var(--ink); color:var(--paper);
+  padding:.75rem 1.25rem; font-size:.8125rem;
+}
+.skip:focus{ left:0; }
+
+.wrap{ width:100%; max-width:var(--wrap); margin-inline:auto; padding-inline:var(--gut); }
+
+/* ---------- tipografía compartida ---------- */
+
+.eyebrow{
+  margin:0 0 1.5rem;
+  font-size:.6875rem;
+  font-weight:500;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+}
+
+.h2{
+  margin:0;
+  font-family:var(--display);
+  font-weight:500;
+  font-variation-settings:'opsz' 14;
+  font-size:clamp(1.6rem,1.1rem + 2.2vw,2.85rem);
+  line-height:1.14;
+  letter-spacing:-.012em;
+}
+
+.ital{ font-style:italic; }
+
+.prose p{ margin:0 0 1.15rem; color:var(--ink-soft); max-width:52ch; }
+.prose p:last-child{ margin-bottom:0; }
+
+/* ---------- botones ---------- */
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:1rem 1.75rem;
+  background:var(--ink); color:var(--paper);
+  font-size:.75rem; font-weight:500;
+  letter-spacing:.14em; text-transform:uppercase;
+  text-decoration:none;
+  border:1px solid var(--ink);
+  transition:background .35s var(--ease), color .35s var(--ease);
+}
+.btn:hover{ background:transparent; color:var(--ink); }
+
+.btn--ghost{ background:transparent; color:var(--ink); }
+.btn--ghost:hover{ background:var(--ink); color:var(--paper); }
+
+.btn--sm{ padding:.7rem 1.15rem; font-size:.6875rem; letter-spacing:.12em; }
+
+/* ---------- nav ---------- */
+
+.nav{
+  position:fixed; inset:0 0 auto; z-index:50;
+  background:color-mix(in srgb, var(--paper) 82%, transparent);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid transparent;
+  transition:border-color .4s var(--ease);
+}
+.nav.is-stuck{ border-bottom-color:var(--rule); }
+
+.nav__in{
+  max-width:var(--wrap); margin-inline:auto;
+  padding:1.05rem var(--gut);
+  display:flex; align-items:center; gap:2rem;
+}
+
+.nav__mark{
+  font-family:var(--display);
+  font-weight:500;
+  font-variation-settings:'opsz' 10;
+  font-size:1.0625rem;
+  text-decoration:none;
+  margin-right:auto;
+  white-space:nowrap;
+}
+
+.nav__links{ display:flex; gap:2rem; }
+.nav__links a{
+  font-size:.75rem; letter-spacing:.1em; text-transform:uppercase;
+  text-decoration:none; color:var(--ink-soft);
+  transition:color .3s var(--ease);
+}
+.nav__links a:hover{ color:var(--ink); }
+
+/* ---------- hero ---------- */
+
+.hero{ padding:clamp(6rem,12vh,8rem) 0 clamp(2.5rem,6vh,4rem); }
+
+.hero__in{
+  max-width:var(--wrap); margin-inline:auto; padding-inline:var(--gut);
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:clamp(2rem,5vw,5rem);
+  align-items:center;
+}
+
+.hero__name{
+  margin:0 0 1.5rem;
+  font-family:var(--display);
+  font-weight:400;
+  /* A 128px los trazos finos ya tienen cuerpo propio: acá el opsz
+     puede quedar alto y conservar el dramatismo del corte display. */
+  font-variation-settings:'opsz' 32;
+  font-size:clamp(3.25rem,1.2rem + 8.4vw,8rem);
+  line-height:.92;
+  letter-spacing:-.03em;
+}
+.hero__name span{ display:block; }
+.hero__name .ital{ margin-left:.09em; }
+
+.hero__lede{
+  margin:0 0 2.25rem;
+  font-family:var(--display);
+  font-weight:500;
+  font-variation-settings:'opsz' 12;
+  font-size:clamp(1.125rem,.95rem + .8vw,1.6rem);
+  line-height:1.35;
+  max-width:24ch;
+}
+
+.hero__cta{ display:flex; flex-wrap:wrap; gap:.75rem; margin-bottom:2.25rem; }
+
+.hero__proof{
+  margin:0; padding-top:1.35rem;
+  border-top:1px solid var(--rule);
+  font-size:.75rem; letter-spacing:.06em; color:var(--ink-soft);
+  max-width:30rem;
+}
+.hero__proof strong{
+  font-family:var(--display);
+  font-variation-settings:'opsz' 11;
+  font-size:1.3rem; font-weight:500;
+  color:var(--ink); margin-right:.5rem;
+}
+
+.hero__shot img{
+  width:100%; aspect-ratio:2/3; object-fit:cover;
+  background:var(--paper-deep);
+}
+
+/* ---------- marquee de marcas ---------- */
+
+.marquee{
+  border-block:1px solid var(--rule);
+  padding:2.25rem 0;
+  overflow:hidden;
+}
+.marquee__track{ display:flex; width:max-content; animation:slide 46s linear infinite; }
+.marquee__row{ display:flex; align-items:center; gap:clamp(3rem,6vw,6rem); padding-right:clamp(3rem,6vw,6rem); }
+.marquee__row img{
+  /* Altura óptica, no matemática: a igual alto, un logo apaisado como Coto
+     pesa el triple que uno cuadrado como Mostaza. --logo-h los empareja. */
+  height:calc(var(--logo-h,1) * clamp(1.4rem,2.4vw,2rem));
+  width:auto;
+  filter:grayscale(1) contrast(1.15);
+  mix-blend-mode:multiply;
+  opacity:.5;
+  transition:opacity .35s var(--ease);
+}
+.marquee:hover .marquee__row img{ opacity:.78; }
+
+.marquee__row img[data-logo="coto"]{ --logo-h:.88; }
+.marquee__row img[data-logo="bplay"]{ --logo-h:.88; }
+.marquee__row img[data-logo="swiss-medical"]{ --logo-h:.95; }
+.marquee__row img[data-logo="cat"]{ --logo-h:1.2; }
+.marquee__row img[data-logo="chery"]{ --logo-h:1.3; }
+.marquee__row img[data-logo="osde"]{ --logo-h:1.35; }
+.marquee__row img[data-logo="mostaza"]{ --logo-h:1.45; }
+
+/* ---------- v2: marcas en color ----------
+   Los diez PNG tienen fondo transparente, así que el color va tal cual:
+   sin blend que los tiña ni cajas blancas sobre el papel. */
+.v2 .marquee__row img{
+  filter:none;
+  mix-blend-mode:normal;
+  opacity:1;
+}
+.v2 .marquee:hover .marquee__row img{ opacity:1; }
+
+@keyframes slide{ to{ transform:translateX(-50%); } }
+
+/* ---------- secciones ---------- */
+
+.section{ padding-block:var(--band); }
+
+/* ---------- about me ---------- */
+
+.about{ background:var(--paper-deep); }
+
+.about__in{
+  display:grid;
+  grid-template-columns:.75fr 1.25fr;
+  gap:clamp(2rem,6vw,5.5rem);
+  align-items:center;
+}
+.about__shot img{
+  width:100%; aspect-ratio:2/3; object-fit:cover;
+  background:var(--paper);
+}
+.about__text .h2{ margin-bottom:1.75rem; max-width:24ch; }
+
+.rubros{
+  display:flex; flex-wrap:wrap; align-items:center;
+  margin-top:2.5rem; padding-top:1.5rem;
+  border-top:1px solid var(--rule);
+  font-size:.6875rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.rubros li + li::before{ content:'·'; margin:0 .8rem; color:var(--rule); }
+
+/* ---------- selected works ---------- */
+
+.work__head{
+  display:flex; align-items:baseline; justify-content:space-between;
+  gap:1rem;
+  margin-bottom:clamp(2rem,5vh,3rem);
+  padding-bottom:1.25rem;
+  border-bottom:1px solid var(--rule);
+}
+.work__head .eyebrow{ margin-bottom:0; }
+
+.sound{
+  display:inline-flex; align-items:center; gap:.55rem;
+  padding:.5rem .85rem;
+  background:transparent;
+  border:1px solid var(--rule);
+  color:var(--ink-soft);
+  font-family:inherit;
+  font-size:.6875rem; letter-spacing:.16em; text-transform:uppercase;
+  cursor:pointer;
+  transition:border-color .3s var(--ease), color .3s var(--ease);
+}
+.sound:hover{ border-color:var(--ink); color:var(--ink); }
+
+.sound__ico{
+  width:15px; height:15px; flex:none;
+  fill:none; stroke:currentColor;
+  stroke-width:1.7; stroke-linecap:round;
+}
+.sound__body{ fill:currentColor; stroke:none; }
+.sound__wave,
+.sound__slash{ display:none; }
+.sound[data-state="on"]  .sound__wave{ display:block; }
+.sound[data-state="off"] .sound__slash{ display:block; }
+
+.cat{ margin-bottom:clamp(3rem,7vh,5rem); }
+.cat:last-child{ margin-bottom:0; }
+
+.cat__title{
+  margin:0 0 1.35rem;
+  font-family:var(--sans);
+  font-size:.75rem; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase;
+}
+
+.reels{ display:grid; gap:clamp(.5rem,1.1vw,.9rem); }
+.reels--5{ grid-template-columns:repeat(5,1fr); }
+.reels--4{ grid-template-columns:repeat(4,1fr); }
+
+.reel{
+  position:relative;
+  aspect-ratio:9/16;
+  overflow:hidden;
+  background:var(--paper-deep);
+}
+.reel video{
+  width:100%; height:100%; object-fit:cover;
+  transition:transform .8s var(--ease), filter .5s var(--ease);
+  filter:saturate(.82);
+}
+.reel:hover video{ transform:scale(1.035); filter:saturate(1); }
+
+/* ---------- work with me ---------- */
+
+.cta{ background:var(--ink); color:var(--paper); }
+.cta .eyebrow{ color:color-mix(in srgb, var(--paper) 58%, transparent); }
+
+.cta__in{
+  display:grid;
+  grid-template-columns:.75fr 1.25fr;
+  gap:clamp(2rem,6vw,5rem);
+  align-items:center;
+}
+
+.cta__h{
+  margin:0 0 1.25rem;
+  font-family:var(--display);
+  font-weight:500;
+  font-variation-settings:'opsz' 20;
+  font-size:clamp(2.1rem,1.3rem + 3.4vw,4.25rem);
+  line-height:1.04;
+  letter-spacing:-.02em;
+}
+.cta__p{
+  margin:0 0 2.25rem;
+  color:color-mix(in srgb, var(--paper) 72%, transparent);
+  max-width:38ch;
+}
+/* ---------- canales de contacto ----------
+   Cada canal es su propio CTA: el icono lo identifica de un vistazo,
+   la etiqueta dice para qué sirve y el dato real muestra a dónde va.
+   Los SVG usan fill:currentColor, así que se invierten solos en hover. */
+
+.ways{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:.55rem;
+  margin-top:2.5rem;
+}
+.ways__i--wide{ grid-column:1 / -1; }
+
+.ways a{
+  display:flex; align-items:center; gap:1rem;
+  height:100%;
+  padding:1.05rem 1.2rem;
+  text-decoration:none;
+  color:var(--paper);
+  border:1px solid color-mix(in srgb, var(--paper) 26%, transparent);
+  transition:background .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease);
+}
+.ways a:hover{ background:var(--paper); color:var(--ink); border-color:var(--paper); }
+
+/* WhatsApp arranca invertido: es el canal que más rinde, y se ve primero. */
+.ways__i--main a{
+  background:var(--paper); color:var(--ink); border-color:var(--paper);
+  padding:1.3rem 1.4rem;
+}
+.ways__i--main a:hover{ background:transparent; color:var(--paper); }
+
+.ways__ico{ flex:none; display:grid; place-items:center; }
+.ways__ico svg{ width:1.35rem; height:1.35rem; display:block; }
+.ways__i--main .ways__ico svg{ width:1.6rem; height:1.6rem; }
+
+.ways__txt{ display:flex; flex-direction:column; gap:.15rem; min-width:0; }
+.ways__k{
+  font-size:.625rem; letter-spacing:.16em; text-transform:uppercase;
+  opacity:.6;
+}
+.ways__v{
+  font-size:.9375rem;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.ways__i--main .ways__v{ font-size:1.15rem; }
+
+.ways__go{
+  flex:none; margin-left:auto;
+  display:grid; place-items:center;
+  transition:transform .3s var(--ease);
+}
+.ways__go svg{ width:1.1rem; height:1.1rem; display:block; }
+.ways a:hover .ways__go{ transform:translateX(.25rem); }
+
+/* La foto va a la izquierda y en color, como en la web original.
+   order:-1 la manda a la primera columna sin alterar el orden del HTML,
+   donde el texto sigue primero por lectura y accesibilidad. */
+.cta__shot{ order:-1; }
+.cta__shot img{
+  width:100%; aspect-ratio:2/3; object-fit:cover;
+}
+
+/* ---------- pie ----------
+   Los datos de contacto viven en Work with Me. Acá sólo la firma
+   y la base: repetirlos abajo no agregaba nada. */
+
+.foot{ padding-block:clamp(2.25rem,5vh,3rem); }
+
+.foot__in{
+  display:flex; flex-wrap:wrap;
+  align-items:baseline; justify-content:space-between;
+  gap:.5rem 2rem;
+}
+
+.foot__sig{
+  margin:0;
+  font-family:var(--display);
+  font-weight:500;
+  font-variation-settings:'opsz' 9;
+  font-size:.875rem;
+  color:var(--ink-soft);
+}
+.foot__loc{
+  margin:0;
+  font-size:.625rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-soft);
+}
+
+/* ---------- dock móvil ---------- */
+
+.dock{
+  position:fixed; left:1rem; right:1rem; bottom:1rem; z-index:45;
+  display:none;
+  align-items:center; justify-content:center;
+  padding:1rem;
+  background:var(--ink); color:var(--paper);
+  font-size:.75rem; font-weight:500;
+  letter-spacing:.14em; text-transform:uppercase;
+  text-decoration:none;
+  transform:translateY(150%);
+  transition:transform .45s var(--ease);
+}
+.dock.is-on{ transform:translateY(0); }
+
+/* ---------- reveal ---------- */
+
+.js .reveal{ opacity:0; transform:translateY(1.25rem); }
+.js .reveal.is-in{
+  opacity:1; transform:none;
+  transition:opacity .75s var(--ease), transform .75s var(--ease);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+@media (max-width:1080px){
+  .reels--5{ grid-template-columns:repeat(3,1fr); }
+  .reels--4{ grid-template-columns:repeat(2,1fr); }
+}
+
+@media (max-width:880px){
+  .nav__links{ display:none; }
+
+  .hero__in{ grid-template-columns:1fr; gap:2.5rem; }
+  .hero__shot{ order:-1; max-width:19rem; }
+  .hero__name{ font-size:clamp(3rem,13vw,5rem); }
+
+  .about__in,
+  .cta__in{ grid-template-columns:1fr; }
+  .about__shot{ max-width:16rem; }
+  .cta__shot{ max-width:14rem; }
+
+  .ways{ grid-template-columns:1fr; }
+
+  /* Sin hover no hay nada que activar. */
+  .sound{ display:none; }
+
+  .dock{ display:flex; }
+  .foot{ padding-bottom:6rem; }
+}
+
+@media (max-width:560px){
+  .reels--5,
+  .reels--4{ grid-template-columns:repeat(2,1fr); }
+  .nav__in{ gap:1rem; }
+}
+
+/* ---------- accesibilidad ---------- */
+
+@media (prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  .marquee__track{ animation:none; }
+  .js .reveal{ opacity:1; transform:none; transition:none; }
+  .reel video{ transition:none; }
+  .reel:hover video{ transform:none; }
+  *{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
