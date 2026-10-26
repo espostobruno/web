@@ -253,6 +253,19 @@ a{ color:inherit; }
   background:var(--paper-deep);
 }
 
+/* ---------- borrador ----------
+   El hero abre con un reel en vez de la foto fija. Es la incoherencia
+   más grande que queda: un tipo que vende video en movimiento abriendo
+   con una imagen quieta. En 9:16, que es el formato real del trabajo. */
+.hero__reel{ display:none; }
+
+body.borrador .hero__shot img{ display:none; }
+body.borrador .hero__reel{
+  display:block;
+  width:100%; aspect-ratio:9/16; object-fit:cover;
+  background:var(--paper-deep);
+}
+
 /* ---------- marquee de marcas ---------- */
 
 .marquee{
