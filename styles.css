@@ -45,6 +45,15 @@ body.oscuro .marquee:hover .marquee__row img{ opacity:.85; }
 /* Sobre negro el video aguanta más saturación sin gritar. */
 body.oscuro .reel video{ filter:saturate(.95); }
 
+/* El bloque de contacto usa var(--ink) de fondo, así que al invertir
+   los tokens se daba vuelta y quedaba claro al final de una página negra.
+   Redefinimos los dos tokens sólo dentro de .cta para que vuelva a la
+   relación original —tinta de fondo, papel de texto— sin tocar sus reglas. */
+body.oscuro .cta{
+  --ink:   #141419;
+  --paper: #F2EFE9;
+}
+
 /* La foto de estudio es fondo blanco: sobre negro se la baja un punto
    para que no queme al lado del resto. */
 body.oscuro .hero__shot img,
