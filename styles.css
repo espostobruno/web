@@ -21,6 +21,35 @@
   --ease: cubic-bezier(.22,.61,.36,1);
 }
 
+/* ---------- variante oscura ----------
+   No es un tema aparte: son los mismos tokens dados vuelta. El papel
+   pasa a tinta y los reels quedan como única fuente de luz de la página.
+   El bloque de contacto se invierte solo, porque usa var(--ink) de fondo. */
+body.oscuro{
+  --paper:      #0C0C0F;
+  --paper-deep: #141419;
+  --ink:        #F2EFE9;
+  --ink-soft:   #8B857A;
+  --rule:       #2C2C33;
+}
+
+/* Los logos son PNG transparentes: en oscuro los pasamos a blanco.
+   El multiply que usamos sobre papel acá los haría desaparecer. */
+body.oscuro .marquee__row img{
+  filter:grayscale(1) brightness(0) invert(1);
+  mix-blend-mode:normal;
+  opacity:.42;
+}
+body.oscuro .marquee:hover .marquee__row img{ opacity:.85; }
+
+/* Sobre negro el video aguanta más saturación sin gritar. */
+body.oscuro .reel video{ filter:saturate(.95); }
+
+/* La foto de estudio es fondo blanco: sobre negro se la baja un punto
+   para que no queme al lado del resto. */
+body.oscuro .hero__shot img,
+body.oscuro .about__shot img{ filter:brightness(.94) contrast(1.02); }
+
 *,*::before,*::after{ box-sizing:border-box; }
 
 html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; scroll-padding-top:5rem; }

@@ -37,6 +37,9 @@
     });
   });
 
+  /* /?oscuro muestra la variante en negro. Sin el parámetro, la de papel. */
+  if (location.search.indexOf('oscuro') !== -1) document.body.classList.add('oscuro');
+
   /* ---------- el nombre reacciona al cursor ----------
      Bodoni Moda es variable en el eje óptico (6–96). A menor valor, la
      fuente está dibujada para texto chico y los trazos finos vienen más
