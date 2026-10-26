@@ -40,17 +40,6 @@
   /* /?oscuro muestra la variante en negro. Sin el parámetro, la de papel. */
   if (location.search.indexOf('oscuro') !== -1) document.body.classList.add('oscuro');
 
-  /* /?borrador junta todo lo propuesto: oscuro + el hero con reel.
-     El video arranca solo y en silencio; con reduced-motion queda el poster. */
-  if (location.search.indexOf('borrador') !== -1) {
-    document.body.classList.add('oscuro', 'borrador');
-    var heroReel = document.querySelector('.hero__reel');
-    if (heroReel && !reduce) {
-      var hp = heroReel.play();
-      if (hp && hp.catch) hp.catch(function () { /* queda el poster */ });
-    }
-  }
-
   /* ---------- el nombre reacciona al cursor ----------
      Bodoni Moda es variable en el eje óptico (6–96). A menor valor, la
      fuente está dibujada para texto chico y los trazos finos vienen más
