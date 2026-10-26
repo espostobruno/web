@@ -37,6 +37,81 @@
     });
   });
 
+  /* ---------- el nombre reacciona al cursor ----------
+     Bodoni Moda es variable en el eje óptico (6–96). A menor valor, la
+     fuente está dibujada para texto chico y los trazos finos vienen más
+     gruesos; a mayor valor, afinan hasta el pelo. Mapeamos la distancia
+     del cursor a ese eje: la letra más cercana engorda, las vecinas la
+     siguen en degradé. No se mueve la palabra, respira la tipografía.
+  ---------------------------------------------------------- */
+
+  (function nombreVivo () {
+    var h1 = document.querySelector('.hero__name');
+    if (!h1 || reduce || !fine) return;
+
+    var OPSZ_LEJOS = 40, OPSZ_CERCA = 11;
+    var PESO_LEJOS = 400, PESO_CERCA = 580;
+    var RADIO = 190;
+
+    // Partimos cada palabra en letras sin tocar el HTML original.
+    var letras = [];
+    [].forEach.call(h1.children, function (palabra) {
+      var texto = palabra.textContent;
+      palabra.textContent = '';
+      for (var i = 0; i < texto.length; i++) {
+        var s = document.createElement('span');
+        s.className = texto[i] === ' ' ? 'ltr ltr--sp' : 'ltr';
+        s.textContent = texto[i] === ' ' ? ' ' : texto[i];
+        palabra.appendChild(s);
+        if (texto[i] !== ' ') letras.push(s);
+      }
+    });
+    if (!letras.length) return;
+
+    var centros = [];
+    function medir () {
+      centros = letras.map(function (l) {
+        var r = l.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      });
+    }
+    medir();
+    addEventListener('resize', medir, { passive: true });
+    addEventListener('scroll', medir, { passive: true });
+
+    var cx = -9999, cy = -9999, pedido = false;
+
+    function pintar () {
+      pedido = false;
+      for (var i = 0; i < letras.length; i++) {
+        var c = centros[i];
+        if (!c) continue;
+        var dx = c.x - cx, dy = c.y - cy;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        var k = Math.max(0, 1 - d / RADIO);
+        k = k * k * (3 - 2 * k); // suaviza los bordes del degradé
+        var opsz = OPSZ_LEJOS + (OPSZ_CERCA - OPSZ_LEJOS) * k;
+        var peso = PESO_LEJOS + (PESO_CERCA - PESO_LEJOS) * k;
+        letras[i].style.fontVariationSettings = "'opsz' " + opsz.toFixed(1);
+        letras[i].style.fontWeight = Math.round(peso);
+        letras[i].style.transform = k > 0.01 ? 'translateY(' + (-4 * k).toFixed(2) + 'px)' : '';
+      }
+    }
+
+    function mover (e) {
+      cx = e.clientX; cy = e.clientY;
+      if (!pedido) { pedido = true; requestAnimationFrame(pintar); }
+    }
+
+    // Escuchamos en toda la ventana: el degradé tiene que empezar a
+    // notarse antes de que el cursor toque las letras.
+    addEventListener('pointermove', mover, { passive: true });
+    addEventListener('pointerleave', function () {
+      cx = cy = -9999;
+      requestAnimationFrame(pintar);
+    }, { passive: true });
+  })();
+
   /* ---------- reveal on scroll ---------- */
 
   var revealables = document.querySelectorAll('.reveal');

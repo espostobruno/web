@@ -172,8 +172,17 @@ a{ color:inherit; }
   line-height:.92;
   letter-spacing:-.03em;
 }
-.hero__name span{ display:block; }
+.hero__name > span{ display:block; }
 .hero__name .ital{ margin-left:.09em; }
+
+/* Cada letra es su propia caja para poder moverle el eje óptico
+   y empujarla un pelo. inline-block es necesario para el transform. */
+.hero__name .ltr{
+  display:inline-block;
+  font-variation-settings:'opsz' 32;
+  will-change:font-variation-settings, transform;
+}
+.hero__name .ltr--sp{ width:.26em; }
 
 .hero__lede{
   margin:0 0 2.25rem;
