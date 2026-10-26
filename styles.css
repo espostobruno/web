@@ -232,10 +232,11 @@ a{ color:inherit; }
   max-width:24ch;
 }
 
-.hero__cta{ display:flex; flex-wrap:wrap; gap:.75rem; margin-bottom:2.25rem; }
+/* La prueba va antes de la invitación: primero el motivo, después el pedido. */
+.hero__cta{ display:flex; flex-wrap:wrap; gap:.75rem; }
 
 .hero__proof{
-  margin:0; padding-top:1.35rem;
+  margin:0 0 2rem; padding-top:1.35rem;
   border-top:1px solid var(--rule);
   font-size:.75rem; letter-spacing:.06em; color:var(--ink-soft);
   max-width:30rem;
@@ -570,7 +571,7 @@ a{ color:inherit; }
   .hero__shot{ max-width:12.5rem; }
   .hero__name{ font-size:clamp(2.75rem,12vw,4rem); }
   .hero__lede{ margin-bottom:1.75rem; }
-  .hero__cta{ margin-bottom:1.75rem; }
+  .hero__proof{ margin-bottom:1.5rem; }
 }
 
 /* ---------- accesibilidad ---------- */
