@@ -501,6 +501,11 @@ a{ color:inherit; }
   /* Sin hover no hay nada que activar. */
   .sound{ display:none; }
 
+  /* Zonas táctiles de 44px: abajo de eso el dedo falla.
+     El margen negativo agranda el área sin mover el layout. */
+  .nav__mark{ padding-block:.6rem; margin-block:-.6rem; }
+  .btn--sm{ min-height:44px; }
+
   .dock{ display:flex; }
   .foot{ padding-bottom:6rem; }
 }
@@ -509,6 +514,16 @@ a{ color:inherit; }
   .reels--5,
   .reels--4{ grid-template-columns:repeat(2,1fr); }
   .nav__in{ gap:1rem; }
+
+  /* En celular el hero medía 1137px sobre una pantalla de 812: el nombre
+     quedaba fuera de vista. Achicamos la foto y el aire para que el
+     nombre, la bajada y los botones entren en la primera pantalla. */
+  .hero{ padding:clamp(4.5rem,10vh,6rem) 0 clamp(2rem,5vh,3rem); }
+  .hero__in{ gap:1.75rem; }
+  .hero__shot{ max-width:12.5rem; }
+  .hero__name{ font-size:clamp(2.75rem,12vw,4rem); }
+  .hero__lede{ margin-bottom:1.75rem; }
+  .hero__cta{ margin-bottom:1.75rem; }
 }
 
 /* ---------- accesibilidad ---------- */
