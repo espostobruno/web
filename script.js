@@ -182,19 +182,9 @@
 
   var reels = document.querySelectorAll('.reel video');
 
-  /* El frame 0 de un TikTok casi nunca sirve de portada: suele ser negro,
-     una transición o un desenfoque. Buscamos un frame ya entrado en la pieza
-     y lo dejamos fijo como portada. */
-  function seedPoster(v) {
-    v.addEventListener('loadedmetadata', function () {
-      var d = isFinite(v.duration) && v.duration > 0 ? v.duration : 4;
-      var t = Math.min(1.5, d * 0.22);
-      v._seed = t;
-      try { v.currentTime = t; } catch (e) { /* aún no se puede buscar */ }
-    }, { once: true });
-  }
-
-  reels.forEach(seedPoster);
+  /* Cada reel tiene su portada como archivo (atributo poster), así que el
+     video siempre arranca desde el segundo cero: cortar el principio se
+     comía la primera frase. */
 
   /* ---------- sonido ----------
      Los navegadores no dejan sonar un video hasta que hubo un gesto real
@@ -270,8 +260,11 @@
   function stop(v) {
     v.muted = true;
     v.pause();
-    // Volver a la portada elegida, no al frame 0.
-    try { v.currentTime = v._seed || 0; } catch (e) { /* metadata aún no cargada */ }
+    /* load() devuelve el elemento a su estado inicial, o sea que vuelve a
+       mostrarse el poster y el próximo hover arranca desde cero. Poner
+       currentTime = 0 dejaría a la vista el frame 0 del video, que suele
+       ser negro o una transición. */
+    try { v.load(); } catch (e) { /* ignorar */ }
     if (current === v) current = null;
   }
 
