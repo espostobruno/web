@@ -9,17 +9,20 @@
 
   /* ---------- marquee de marcas ---------- */
 
+  /* Las medidas son las del archivo. Van como atributos width/height para
+     que la caja tenga tamaño desde el arranque, antes de que la imagen
+     baje: un <img> sin cargar y con width:auto mide cero de ancho. */
   var MARCAS = [
-    ['uala',          'Ualá'],
-    ['swiss-medical', 'Swiss Medical'],
-    ['osde',          'Osde'],
-    ['coto',          'Coto'],
-    ['bplay',         'Bplay'],
-    ['axe',           'Axe'],
-    ['mostaza',       'Mostaza'],
-    ['buscapina',     'Buscapina'],
-    ['chery',         'Chery'],
-    ['cat',           'CAT']
+    ['uala',          'Ualá',          304, 160],
+    ['swiss-medical', 'Swiss Medical', 529, 160],
+    ['osde',          'Osde',          213, 160],
+    ['coto',          'Coto',          532, 160],
+    ['bplay',         'Bplay',         533, 160],
+    ['axe',           'Axe',           285, 160],
+    ['mostaza',       'Mostaza',       160, 160],
+    ['buscapina',     'Buscapina',     301, 160],
+    ['chery',         'Chery',         284, 160],
+    ['cat',           'CAT',           267, 160]
   ];
 
   document.querySelectorAll('.marquee__row').forEach(function (row) {
@@ -30,7 +33,13 @@
       img.src = 'assets/img/logos/' + m[0] + '.png';
       img.dataset.logo = m[0];
       img.alt = hidden ? '' : m[1];
-      img.loading = 'lazy';
+      img.width  = m[2];
+      img.height = m[3];
+      /* Nada de loading="lazy" acá. El navegador sólo baja una imagen
+         diferida cuando su caja entra en pantalla, y una caja de ancho
+         cero no entra nunca: la imagen quedaba esperando para siempre y
+         la tira de marcas se veía vacía. Son diez PNG chicos. */
+      img.decoding = 'async';
       if (hidden) li.setAttribute('aria-hidden', 'true');
       li.appendChild(img);
       row.appendChild(li);

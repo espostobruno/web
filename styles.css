@@ -33,11 +33,9 @@ body.oscuro{
   --rule:       #2C2C33;
 }
 
-/* Los logos son PNG transparentes: en oscuro los pasamos a blanco.
-   El multiply que usamos sobre papel acá los haría desaparecer. */
+/* Los logos son PNG transparentes: en oscuro los pasamos a blanco. */
 body.oscuro .marquee__row img{
   filter:grayscale(1) brightness(0) invert(1);
-  mix-blend-mode:normal;
   opacity:.42;
 }
 body.oscuro .marquee:hover .marquee__row img{ opacity:.85; }
@@ -260,19 +258,28 @@ a{ color:inherit; }
   padding:2.25rem 0;
   overflow:hidden;
 }
-.marquee__track{ display:flex; width:max-content; animation:slide 46s linear infinite; }
-.marquee__row{ display:flex; align-items:center; gap:clamp(3rem,6vw,6rem); padding-right:clamp(3rem,6vw,6rem); }
+.marquee__track{
+  display:flex; width:max-content;
+  animation:slide 46s linear infinite;
+  will-change:transform;
+}
+.marquee__row{
+  display:flex; flex:0 0 auto; align-items:center;
+  gap:clamp(3rem,6vw,6rem); padding-right:clamp(3rem,6vw,6rem);
+}
+/* La tira no se encoge nunca: cada logo ocupa su ancho natural y la pista
+   crece a lo largo. Sin esto, max-width:100% del reset los iría apretando. */
+.marquee__row li{ flex:0 0 auto; }
 .marquee__row img{
   /* Altura óptica, no matemática: a igual alto, un logo apaisado como Coto
      pesa el triple que uno cuadrado como Mostaza. --logo-h los empareja. */
   height:calc(var(--logo-h,1) * clamp(1.4rem,2.4vw,2rem));
-  width:auto;
+  width:auto; max-width:none;
   filter:grayscale(1) contrast(1.15);
-  mix-blend-mode:multiply;
-  opacity:.5;
+  opacity:.55;
   transition:opacity .35s var(--ease);
 }
-.marquee:hover .marquee__row img{ opacity:.78; }
+.marquee:hover .marquee__row img{ opacity:.8; }
 
 .marquee__row img[data-logo="coto"]{ --logo-h:.88; }
 .marquee__row img[data-logo="bplay"]{ --logo-h:.88; }
@@ -284,10 +291,9 @@ a{ color:inherit; }
 
 /* ---------- v2: marcas en color ----------
    Los diez PNG tienen fondo transparente, así que el color va tal cual:
-   sin blend que los tiña ni cajas blancas sobre el papel. */
+   sin cajas blancas sobre el papel. */
 .v2 .marquee__row img{
   filter:none;
-  mix-blend-mode:normal;
   opacity:1;
 }
 .v2 .marquee:hover .marquee__row img{ opacity:1; }
@@ -314,14 +320,24 @@ a{ color:inherit; }
 }
 .about__text .h2{ margin-bottom:1.75rem; max-width:24ch; }
 
+/* La separación vive en el hueco, no pegada a la palabra. Con el '·' como
+   ::before de cada rubro, al partirse la lista en dos renglones el punto
+   se iba al principio del segundo y quedaba colgando: eso era lo
+   desprolijo. Arriba de 880px los cinco entran en una línea y el punto
+   vuelve, que es donde aporta ritmo. */
 .rubros{
   display:flex; flex-wrap:wrap; align-items:center;
+  column-gap:1.5rem; row-gap:.7rem;
   margin-top:2.5rem; padding-top:1.5rem;
   border-top:1px solid var(--rule);
   font-size:.6875rem; letter-spacing:.18em; text-transform:uppercase;
   color:var(--ink-soft);
 }
-.rubros li + li::before{ content:'·'; margin:0 .8rem; color:var(--rule); }
+
+@media (min-width:881px){
+  .rubros{ column-gap:0; }
+  .rubros li + li::before{ content:'·'; margin:0 .8rem; color:var(--rule); }
+}
 
 /* ---------- selected works ---------- */
 
@@ -546,6 +562,48 @@ a{ color:inherit; }
 
   .ways{ grid-template-columns:1fr; }
 
+  /* ---------- eje central en celular ----------
+     En dos columnas el texto alineado a la izquierda es lo que arma la
+     grilla. Apiladas en una sola, esa misma alineación deja todo el aire
+     de un lado y las fotos corridas contra el borde: se lee descolgado.
+     Sobre un eje central el bloque cierra parejo de los dos lados. */
+  .hero__text,
+  .about__text,
+  .cta__lead,
+  .cat__title{ text-align:center; }
+
+  /* width:100% no es redundante: un item de grilla con márgenes auto deja
+     de estirarse y pasa a medir su contenido, y una foto diferida que
+     todavía no bajó mide cero. Con el ancho declarado la caja existe
+     desde el arranque y los márgenes sólo reparten lo que sobra. */
+  .hero__shot,
+  .about__shot,
+  .cta__shot{ width:100%; margin-inline:auto; }
+
+  .hero__name .ital{ margin-left:0; }
+
+  .hero__lede,
+  .hero__proof,
+  .about__text .h2,
+  .prose p,
+  .cta__p{ margin-inline:auto; }
+
+  /* Centrado, el "+50 marcas" en renglón propio: en línea con la lista de
+     marcas arrastraba el resto y el sobrante caía suelto abajo. */
+  .hero__proof strong{ display:block; margin:0 0 .35rem; }
+
+  .hero__cta,
+  .rubros,
+  .work__head,
+  .foot__in{ justify-content:center; }
+
+  .work__head,
+  .foot__in{ text-align:center; }
+
+  /* Cada canal de contacto es icono + texto + flecha en una fila: ahí el
+     centrado parte la fila al medio, así que el texto sigue a la izquierda. */
+  .ways{ text-align:left; }
+
   /* Sin hover no hay nada que activar. */
   .sound{ display:none; }
 
@@ -572,12 +630,21 @@ a{ color:inherit; }
   .hero__name{ font-size:clamp(2.75rem,12vw,4rem); }
   .hero__lede{ margin-bottom:1.75rem; }
   .hero__proof{ margin-bottom:1.5rem; }
+
+  /* El hueco define dónde corta la lista. Con 3rem los cinco rubros caen
+     3 y 2 en todo el rango de celular —375, 390, 430— en vez de 4 y 1 con
+     "Belleza" sola abajo. Pasados los 540px entran los cinco en una línea. */
+  .rubros{ column-gap:3rem; }
 }
 
 /* ---------- accesibilidad ---------- */
 
 @media (prefers-reduced-motion:reduce){
   html{ scroll-behavior:auto; }
+  /* Sin animación la tira quedaría clavada en los tres primeros logos.
+     Que se pueda arrastrar con el dedo para ver el resto. */
+  .marquee{ overflow-x:auto; overflow-y:hidden; scrollbar-width:none; }
+  .marquee::-webkit-scrollbar{ display:none; }
   .marquee__track{ animation:none; }
   .js .reveal{ opacity:1; transform:none; transition:none; }
   .reel video{ transition:none; }
