@@ -185,8 +185,9 @@
   onScroll();
 
   /* ---------- reels ----------
-     Desktop: se reproduce al pasar el mouse.
-     Touch:   se reproduce el que está en pantalla, de a uno.
+     Desktop: se reproduce al pasar el mouse, con sonido.
+     Touch:   se reproducen solos todos los que están a la vista, en
+              silencio, y un toque le da sonido a uno.
   ---------------------------------------------------------- */
 
   var reels = document.querySelectorAll('.reel video');
@@ -287,15 +288,59 @@
       fig.addEventListener('focus', function () { play(v); });
       fig.addEventListener('blur',  function () { stop(v); });
     });
-  } else if ('IntersectionObserver' in window) {
-    var reelObs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        var v = entry.target;
-        if (entry.isIntersecting && entry.intersectionRatio > 0.65) play(v);
-        else v.pause();
-      });
-    }, { threshold: [0, 0.65, 1] });
+  } else {
+    /* En celular cada reel se maneja solo. play() y stop() existen para que
+       suene uno a la vez, y eso acá no aplica —en touch van todos en
+       silencio—: pasarlos por ahí hacía que en la grilla de dos columnas
+       cada reel que entraba matara al de al lado con load(), que además le
+       aborta la descarga. De ahí el orden raro. */
+    function verse(v) {
+      v.muted = true;
+      var p = v.play();
+      if (p && p.catch) p.catch(function () { /* autoplay bloqueado */ });
+    }
 
-    reels.forEach(function (v) { reelObs.observe(v); });
+    if ('IntersectionObserver' in window) {
+      var reelObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          /* Dos umbrales en vez de uno: arranca al pasar 0.6 y recién frena
+             al bajar de 0.45. Comparar contra el mismo número con el que se
+             dispara el observer no servía —entra informando justo 0.65, y
+             0.65 > 0.65 es falso, así que al entrar no arrancaba ninguno—,
+             y además el hueco entre los dos evita que uno que queda
+             justo en el borde prenda y apague mientras se scrollea. */
+          if (entry.intersectionRatio >= 0.6) verse(entry.target);
+          /* pause() a secas, sin load(): conserva lo que ya bajó, así al
+             volver sigue en vez de empezar a descargar de nuevo. */
+          else if (entry.intersectionRatio <= 0.45) entry.target.pause();
+        });
+      }, { threshold: [0.45, 0.6], rootMargin: '-8% 0px -8% 0px' });
+
+      reels.forEach(function (v) { reelObs.observe(v); });
+    } else {
+      reels.forEach(verse);
+    }
+
+    /* Un toque le da sonido al reel, y otro se lo saca. El toque es un gesto
+       real del usuario, así que el navegador sí lo deja sonar; el autoplay
+       del scroll no. Suena uno solo a la vez. */
+    reels.forEach(function (v) {
+      var fig = v.parentNode;
+
+      function tocar() {
+        if (!v.muted) { v.muted = true; return; }
+        reels.forEach(function (otro) { if (otro !== v) otro.muted = true; });
+        v.muted = false;
+        try { v.volume = VOLUMEN; } catch (e) { /* ignorar */ }
+        var p = v.play();
+        if (p && p.catch) p.catch(function () { v.muted = true; verse(v); });
+      }
+
+      fig.tabIndex = 0;
+      fig.addEventListener('click', tocar);
+      fig.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tocar(); }
+      });
+    });
   }
 })();
